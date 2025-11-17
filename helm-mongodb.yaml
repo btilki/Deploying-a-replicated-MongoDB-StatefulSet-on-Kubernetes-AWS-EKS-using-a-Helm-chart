@@ -1,0 +1,15 @@
+architecture: replicaset
+replicaCount: 3
+persistence:
+  storageClass: "gp3"   # AWS EBS default StorageClass
+auth:
+  rootPassword: secret-root-pwd
+image:
+  registry: docker.io
+  tag: latest
+  repository: bitnamisecure/mongodb
+global:
+  security:
+    allowInsecureImages: True
+metrics:
+  enabled: false
