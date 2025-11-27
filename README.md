@@ -1,5 +1,9 @@
 # Deploying a replicated MongoDB StatefulSet on Kubernetes (AWS EKS) using a Helm chart
 
+## Architecture Diagram
+
+See [architecture-diagram.md](architecture-diagram.md) for a visual representation of the system architecture and traffic flow.
+
 ## Project Purpose
 
 - Install a replicated MongoDB StatefulSet on Kubernetes (AWS EKS) using a Helm chart.
