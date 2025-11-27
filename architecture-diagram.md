@@ -92,7 +92,7 @@ flowchart TB
 
 ## Traffic Flow
 
-1. User accesses `http://YOUR_HOST_DNS_NAME/` in browser
+1. User accesses `http(s)://YOUR_HOST_DNS_NAME/` in browser (HTTPS recommended for production)
 2. DNS resolves to AWS Load Balancer external IP
 3. Load Balancer forwards to nginx Ingress Controller
 4. Ingress Controller matches host rule and routes to mongo-express-service
