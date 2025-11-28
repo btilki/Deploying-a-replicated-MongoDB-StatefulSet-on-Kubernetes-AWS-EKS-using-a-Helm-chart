@@ -65,25 +65,7 @@ kubectl get nodes
 
 ---
 
-### 2. Install Nginx Ingress Controller (Helm)
-
-Add repo and install:
-```bash
-helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-helm repo update
-helm install ingress-nginx ingress-nginx/ingress-nginx \
-    --namespace ingress-nginx --create-namespace
-```
-
-Verify external LoadBalancer:
-```bash
-kubectl get svc -n ingress-nginx
-```
-Note EXTERNAL-IP/hostname. You’ll map this in DNS or via `/etc/hosts` for testing.
-
----
-
-### 3. Add the Bitnami Helm repo and install MongoDB as a replica set
+### 2. Add the Bitnami Helm repo and install MongoDB as a replica set
 
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -111,7 +93,7 @@ kubectl get statefulsets, pods, svc,pvc
 
 ---
 
-### 4. Provide the MongoDB Password to Mongo Express
+### 3. Provide the MongoDB Password to Mongo Express
 
 Create the Secret **before** applying the mongo-express manifest (use the same password as Helm chart):
 ```bash
@@ -129,7 +111,7 @@ kubectl get secret mongodb -o yaml
 
 ---
 
-### 5. Deploy Mongo Express
+### 4. Deploy Mongo Express
 
 Apply manifest:
 ```bash
@@ -151,6 +133,23 @@ If Mongo Express cannot connect:
 
 ---
 
+### 5. Install Nginx Ingress Controller (Helm)
+
+Add repo and install:
+```bash
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+helm repo update
+helm install ingress-nginx ingress-nginx/ingress-nginx \
+    --namespace ingress-nginx --create-namespace
+```
+
+Verify external LoadBalancer:
+```bash
+kubectl get svc -n ingress-nginx
+```
+Note EXTERNAL-IP/hostname. You’ll map this in DNS or via `/etc/hosts` for testing.
+
+___
 ### 6. Configure and Apply Ingress
 
 Edit `helm-ingress.yaml` and replace `YOUR_HOST_DNS_NAME` with your chosen hostname (ex, `mongo.example.com`). Save and apply:
