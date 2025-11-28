@@ -2,17 +2,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
     annotations:
-      kubernetes.io/ingress.class: nginx
+      kubernetes.io/ingress.class: nginx  # Use nginx as the ingress controller
     name: mongo-express
 spec:
   rules:
-  - host: YOUR_HOST_DNS_NAME
+  - host: YOUR_HOST_DNS_NAME  # Replace with your DNS name for external access
     http:
       paths:
-        - path: /
+        - path: /  # Route all traffic from root
           pathType: Prefix
           backend:
             service:
-              name: mongo-express-service
+              name: mongo-express-service  # Target Mongo Express service
               port:
-                number: 8081
+                number: 8081  # Service port for Mongo Express
