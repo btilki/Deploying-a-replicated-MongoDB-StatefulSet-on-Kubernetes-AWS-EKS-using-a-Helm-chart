@@ -53,7 +53,7 @@ eksctl create cluster \
 --version 1.34 \
 --region us-east-1 \
 --nodegroup-name mongo-nodes \
---node-type t2.micro \
+--node-type t3.large \
 --nodes 2 \
 --nodes-min 1 \
 --nodes-max 3
