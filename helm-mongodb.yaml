@@ -1,15 +1,27 @@
+# MongoDB architecture type: single, replicaset, or sharded
 architecture: replicaset
+
+# Number of MongoDB replicas in the StatefulSet
 replicaCount: 3
+
+# Persistent storage settings
 persistence:
   storageClass: "gp3"   # AWS EBS default StorageClass
+
+# Authentication settings
 auth:
-  rootPassword: secret-root-pwd
+  rootPassword: secret-root-pwd  # Root password for MongoDB
+
+# Container image configuration
 image:
-  registry: docker.io
-  tag: latest
-  repository: bitnamisecure/mongodb
+  registry: docker.io            # Docker registry
+  tag: latest                    # Image tag/version
+  repository: bitnamisecure/mongodb # MongoDB image repository
+
 global:
   security:
-    allowInsecureImages: True
+    allowInsecureImages: True    # Allow insecure images (for testing only)
+
+# Metrics exporter configuration
 metrics:
-  enabled: false
+  enabled: false                 # Enable or disable Prometheus metrics exporter
