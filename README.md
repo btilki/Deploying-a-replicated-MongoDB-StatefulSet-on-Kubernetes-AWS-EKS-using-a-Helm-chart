@@ -7,9 +7,9 @@ See [architecture-diagram.md](architecture-diagram.md) for a visual representati
 ## Project Purpose
 
 - Install a replicated MongoDB StatefulSet on Kubernetes (AWS EKS) using a Helm chart.
-- Enable persistent storage using AWS gp3/EBS storage class.
+- Enable persistent storage using AWS GP3/EBS storage class.
 - Deploy the Mongo Express UI to manage the database.
-- Expose the UI via an nginx ingress controller for browser access.
+- Expose the UI via an NGINX ingress controller for browser access.
 
 ## Technologies Used
 
@@ -17,16 +17,16 @@ See [architecture-diagram.md](architecture-diagram.md) for a visual representati
 - Helm
 - MongoDB (replica set)
 - Mongo Express (UI)
-- nginx Ingress Controller
-- AWS EKS / EBS (gp3 storage class)
+- Nginx Ingress Controller
+- AWS EKS / AWS GP3/EBS storage
 - Linux / kubectl / eksctl
 
 ## Repository Files
 
 - **helm-ingress.yaml**
-  - Kubernetes Ingress manifest to expose the Mongo Express service via nginx ingress. Contains ingress class annotation and a rule with a host placeholder (`YOUR_HOST_DNS_NAME`) — replace with your DNS name or `/etc/hosts` entry.
+  - Kubernetes Ingress manifest to expose the Mongo Express service via Nginx ingress. Contains ingress class annotation and a rule with a host placeholder (`YOUR_HOST_DNS_NAME`) — replace with your DNS name or `/etc/hosts` entry.
 - **helm-mongo-express.yaml**
-  - Deployment + Service manifest for Mongo Express. Deployment reads MongoDB admin password from Kubernetes Secret (`mongodb`, key `mongodb-root-password`). Connection string set in `ME_CONFIG_MONGODB_URL`. Service exposes mongo-express on port 8081.
+  - Deployment + Service manifest for Mongo Express. Deployment reads MongoDB admin password from Kubernetes Secret (`mongodb`, key `mongodb-root-password`). Connection string set in `ME_CONFIG_MONGODB_URL`. Service exposes Mongo-Express on port 8081.
 - **helm-mongodb.yaml**
   - Values file for MongoDB Helm chart (replica set, storageClass, root pw, image info, metrics toggle).
 
@@ -39,7 +39,6 @@ See [architecture-diagram.md](architecture-diagram.md) for a visual representati
 - `kubectl` installed/configured.
 - Helm v3 installed.
 - AWS CLI configured with credentials/region.
-- (Optional) `curl` for convenience.
 
 ---
 
@@ -59,14 +58,14 @@ eksctl create cluster \
 --nodes-max 3
 ```
 
-- eksctl creates kubeconfig for you. Verify with:
+- eksctl creates a kubeconfig for you. Verify with:
 ```bash
 kubectl get nodes
 ```
 
 ---
 
-### 2. Install nginx Ingress Controller (Helm)
+### 2. Install Nginx Ingress Controller (Helm)
 
 Add repo and install:
 ```bash
@@ -84,7 +83,7 @@ Note EXTERNAL-IP/hostname. You’ll map this in DNS or via `/etc/hosts` for test
 
 ---
 
-### 3. Add Bitnami Helm repo and install MongoDB as a replica set
+### 3. Add the Bitnami Helm repo and install MongoDB as a replica set
 
 ```bash
 helm repo add bitnami https://charts.bitnami.com/bitnami
@@ -98,29 +97,29 @@ helm install mongodb bitnami/mongodb \
     --set architecture=replicaset
 ```
 
-If persistence/size not specified in your file, add:
+If persistence/size is not specified in your file, add:
 ```bash
 --set persistence.enabled=true --set persistence.size=8Gi
 ```
 
 Confirm pods, services, PVCs:
 ```bash
-kubectl get statefulsets,pods,svc,pvc
+kubectl get statefulsets, pods, svc,pvc
 ```
 
-**Important:** Note the headless service name (likely `mongodb-headless`). Confirm Mongo Express Deployment URL matches with `mongodb-0.mongodb-headless:27017`.
+**Important:** Note the headless service name (likely `mongodb-headless`). Confirm the Mongo Express Deployment URL matches `mongodb-0.mongodb-headless:27017`.
 
 ---
 
-### 4. Provide MongoDB Password to Mongo Express
+### 4. Provide the MongoDB Password to Mongo Express
 
-Create the Secret **before** applying mongo-express manifest (use same password as Helm chart):
+Create the Secret **before** applying the mongo-express manifest (use the same password as Helm chart):
 ```bash
 kubectl create secret generic mongodb \
     --from-literal=mongodb-root-password='secret-root-pwd'
 ```
 
-If the Helm chart created its own Secret, inspect and reference it or create a readable one.
+If the Helm chart created its own Secret, inspect and reference it, or create a readable one.
 
 Verify the secret:
 ```bash
@@ -139,10 +138,10 @@ kubectl apply -f helm-mongo-express.yaml
 
 Check resources:
 ```bash
-kubectl get deployments,pods,svc -l app=mongo-express
+kubectl get deployments, pods, svc -l app=mongo-express
 ```
 
-If mongo-express cannot connect:
+If Mongo Express cannot connect:
 - Check logs:  
   ```bash
   kubectl logs <mongo-express-pod>
@@ -154,16 +153,16 @@ If mongo-express cannot connect:
 
 ### 6. Configure and Apply Ingress
 
-Edit `helm-ingress.yaml` and replace `YOUR_HOST_DNS_NAME` with your chosen hostname (ex: `mongo.example.com`). Save and apply:
+Edit `helm-ingress.yaml` and replace `YOUR_HOST_DNS_NAME` with your chosen hostname (ex, `mongo.example.com`). Save and apply:
 ```bash
 kubectl apply -f helm-ingress.yaml
 ```
 
-Point DNS A record for `mongo.example.com` to ingress controller’s external IP:
+Point DNS A record for `mongo.example.com` to the ingress controller’s external IP:
 ```bash
 kubectl get svc -n ingress-nginx
 ```
-In Route53 (or your DNS provider), create DNS record mapping hostname.  
+In Route53 (or your DNS provider), create a DNS record mapping the hostname.  
 For quick local testing, update `/etc/hosts` with mapping.
 
 ---
@@ -183,7 +182,7 @@ kubectl logs <ingress-nginx-pod>
 
 ---
 
-### 8. Verification Useful kubectl Commands
+### 8. Useful kubectl Commands for Verification
 
 ```bash
 kubectl get pods -o wide
@@ -212,11 +211,11 @@ eksctl delete cluster --name mongo-eks
 ## Troubleshooting Checklist
 
 - **Pods CrashLoopBackOff?**  
-  Check logs and describe for permission/errors.
+  Check logs and describe the permission/errors.
 - **Mongo Express cannot connect?**  
-  Confirm secret, service names, namespace, MongoDB readiness.
+  Confirm secret, service names, namespace, and MongoDB readiness.
 - **PVCs Pending?**  
-  Check StorageClass `gp3` exists (EKS/AWS EBS CSI). If missing, use available StorageClass or create one.
+  Check StorageClass `gp3` exists (EKS/AWS EBS CSI). If it is missing, use an available StorageClass or create one.
 
 ---
 
