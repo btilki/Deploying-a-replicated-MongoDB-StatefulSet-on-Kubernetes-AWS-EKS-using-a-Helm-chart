@@ -49,10 +49,14 @@ See [architecture-diagram.md](architecture-diagram.md) for a visual representati
 
 ```bash
 eksctl create cluster \
-  --name mongo-eks \
-  --region us-east-1 \
-  --nodes 3 \
-  --node-type t3.medium
+--name mongo-eks \
+--version 1.34 \
+--region us-east-1 \
+--nodegroup-name mongo-nodes \
+--node-type t2.micro \
+--nodes 2 \
+--nodes-min 1 \
+--nodes-max 3
 ```
 
 - eksctl creates kubeconfig for you. Verify with:
